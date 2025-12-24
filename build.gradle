@@ -11,6 +11,7 @@ java {
     sourceCompatibility = '17'
 }
 
+// 依存関係の設定
 configurations {
     compileOnly {
         extendsFrom annotationProcessor
@@ -43,4 +44,5 @@ tasks.named('test') {
 
 tasks.named('bootRun') {
     sourceResources sourceSets.main
+    jvmArgs = ['-agentlib:jdwp=transport=dt_socket,server=y,suspend=n,address=*:5005']
 }
