@@ -25,6 +25,37 @@
         <p th:text="*{status}"></p>
         <pre th:text="*{description}"></pre>
     </div>
+    <div class="card mt-4">
+        <div class="card-header">
+            コメント
+        </div>
+        <div class="card-body">
+            <form th:action="@{/tasks/{taskId}/comments(taskId=${id})}" th:method="post" th:object="${commentForm}">
+                <div class="form-group">
+                    <label class="form-label" for="commentContent">コメントを追加</label>
+                    <textarea id="commentContent" th:field="*{content}" class="form-control" rows="3" th:errorclass="is-invalid"></textarea>
+                    <span th:errors="*{content}" class="invalid-feedback"></span>
+                </div>
+                <div class="mt-3">
+                    <button type="submit" class="btn btn-primary">追加</button>
+                </div>
+            </form>
+            <div class="mt-3" th:if="${#lists.isEmpty(commentList)}">コメントはまだありません。</div>
+            <ul class="list-group mt-3" th:each="comment : ${commentList}">
+                <li class="list-group-item d-flex justify-content-between align-items-start flex-column flex-md-row">
+                    <div class="me-2">
+                        <div th:text="${comment.content}"></div>
+                        <small class="text-muted" th:text="${#temporals.format(comment.createdAt, 'yyyy/MM/dd HH:mm')}"></small>
+                    </div>
+                    <form th:action="@{/tasks/{taskId}/comments/{commentId}(taskId=${id}, commentId=${comment.id})}"
+                          th:method="delete"
+                          onclick="return confirm('コメントを削除しますか？');">
+                        <button type="submit" class="btn btn-outline-danger btn-sm">削除</button>
+                    </form>
+                </li>
+            </ul>
+        </div>
+    </div>
 </section>
 </body>
 </html>

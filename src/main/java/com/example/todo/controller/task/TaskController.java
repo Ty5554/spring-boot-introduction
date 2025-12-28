@@ -13,6 +13,9 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 
+import com.example.todo.controller.comment.CommentDTO;
+import com.example.todo.controller.comment.CommentForm;
+import com.example.todo.service.comment.CommentService;
 import com.example.todo.service.task.TaskService;
 
 import lombok.RequiredArgsConstructor;
@@ -22,6 +25,7 @@ import lombok.RequiredArgsConstructor;
 @RequestMapping("/tasks")
 public class TaskController {
 
+    private final CommentService commentService;
     private final TaskService taskService;
 
     @GetMapping
@@ -36,11 +40,8 @@ public class TaskController {
     }
 
     @GetMapping("/{id}")
-    public String showDetail(@PathVariable("id") long taskId, Model model) {
-        var taskDTO = taskService.findById(taskId)
-                .map(TaskDTO::toDTO)
-                .orElseThrow(TaskNotFoundException::new);
-        model.addAttribute("task", taskDTO);
+    public String showDetail(@PathVariable("id") long taskId, CommentForm commentForm, Model model) {
+        setupDetailPage(taskId, commentForm, model);
         return "tasks/detail";
     }
 
@@ -93,6 +94,7 @@ public class TaskController {
         return "redirect:/tasks";
     }
 
+    // PATCH /tasks/1/toggle
     @PatchMapping("{id}/toggle")
     public String toggleStatus(@PathVariable("id") long id) {
         var updated = taskService.toggleStatus(id);
@@ -100,5 +102,44 @@ public class TaskController {
             throw new TaskNotFoundException();
         }
         return "redirect:/tasks";
+    }
+
+    @PostMapping("/{id}/comments")
+    public String createComment(
+            @PathVariable("id") long taskId,
+            @Validated CommentForm commentForm,
+            BindingResult bindingResult,
+            Model model
+    ) {
+        if (bindingResult.hasErrors()) {
+            setupDetailPage(taskId, commentForm, model);
+            return "tasks/detail";
+        }
+        commentService.create(commentForm.toEntity(taskId));
+        return "redirect:/tasks/{id}";
+    }
+
+    @DeleteMapping("/{taskId}/comments/{commentId}")
+    public String deleteComment(
+            @PathVariable("taskId") long taskId,
+            @PathVariable("commentId") long commentId
+    ) {
+        commentService.delete(taskId, commentId);
+        return "redirect:/tasks/{taskId}";
+    }
+
+    private void setupDetailPage(long taskId, CommentForm commentForm, Model model) {
+        var taskDTO = taskService.findById(taskId)
+                .map(TaskDTO::toDTO)
+                .orElseThrow(TaskNotFoundException::new);
+        var commentList = commentService.findByTaskId(taskId)
+                .stream()
+                .map(CommentDTO::fromEntity)
+                .toList();
+
+        model.addAttribute("id", taskId);
+        model.addAttribute("task", taskDTO);
+        model.addAttribute("commentForm", commentForm);
+        model.addAttribute("commentList", commentList);
     }
 }
