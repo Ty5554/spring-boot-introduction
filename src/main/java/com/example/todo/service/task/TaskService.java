@@ -39,6 +39,7 @@ public class TaskService {
         taskRepository.delete(id);
     }
 
+    // ステータスを変更する
     @Transactional
     public boolean toggleStatus(long id) {
         var taskOpt = taskRepository.selectById(id);

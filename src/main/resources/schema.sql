@@ -5,3 +5,11 @@ CREATE TABLE tasks
   description TEXT,
   status VARCHAR(256) NOT NULL
 );
+
+CREATE TABLE comments (
+  id BIGINT PRIMARY KEY AUTO_INCREMENT,
+  task_id BIGINT NOT NULL,
+  content TEXT NOT NULL,
+  created_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
+  CONSTRAINT fk_comments_tasks FOREIGN KEY (task_id) REFERENCES tasks(id) ON DELETE CASCADE
+);
