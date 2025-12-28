@@ -11,17 +11,19 @@ java {
     sourceCompatibility = '17'
 }
 
-// 依存関係の設定
+// コンパイル時のみに依存するライブラリを設定
 configurations {
     compileOnly {
         extendsFrom annotationProcessor
     }
 }
 
+// 依存関係の設定
 repositories {
     mavenCentral()
 }
 
+// プロジェクトの依存関係を設定
 dependencies {
 	implementation 'org.springframework.boot:spring-boot-starter-thymeleaf'
 	implementation 'org.springframework.boot:spring-boot-starter-validation'
