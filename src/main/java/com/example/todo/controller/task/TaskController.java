@@ -1,7 +1,5 @@
 package com.example.todo.controller.task;
 
-import com.example.todo.service.task.TaskService;
-import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
@@ -9,10 +7,15 @@ import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.ModelAttribute;
+import org.springframework.web.bind.annotation.PatchMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
+
+import com.example.todo.service.task.TaskService;
+
+import lombok.RequiredArgsConstructor;
 
 @Controller
 @RequiredArgsConstructor
@@ -87,6 +90,15 @@ public class TaskController {
     @DeleteMapping("{id}")
     public String delete(@PathVariable("id") long id) {
         taskService.delete(id);
+        return "redirect:/tasks";
+    }
+
+    @PatchMapping("{id}/toggle")
+    public String toggleStatus(@PathVariable("id") long id) {
+        var updated = taskService.toggleStatus(id);
+        if (!updated) {
+            throw new TaskNotFoundException();
+        }
         return "redirect:/tasks";
     }
 }

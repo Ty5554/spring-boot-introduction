@@ -1,7 +1,8 @@
 package com.example.todo.repository.task;
 
-import com.example.todo.service.task.TaskEntity;
-import com.example.todo.service.task.TaskSearchEntity;
+import java.util.List;
+import java.util.Optional;
+
 import org.apache.ibatis.annotations.Delete;
 import org.apache.ibatis.annotations.Insert;
 import org.apache.ibatis.annotations.Mapper;
@@ -9,8 +10,9 @@ import org.apache.ibatis.annotations.Param;
 import org.apache.ibatis.annotations.Select;
 import org.apache.ibatis.annotations.Update;
 
-import java.util.List;
-import java.util.Optional;
+import com.example.todo.service.task.TaskEntity;
+import com.example.todo.service.task.TaskSearchEntity;
+import com.example.todo.service.task.TaskStatus;
 
 @Mapper
 public interface TaskRepository {
@@ -54,6 +56,9 @@ public interface TaskRepository {
               id = #{task.id}
             """)
     void update(@Param("task") TaskEntity entity);
+
+    @Update("UPDATE tasks SET status = #{status} WHERE id = #{taskId}")
+    void updateStatus(@Param("taskId") long id, @Param("status") TaskStatus status);
 
     @Delete("DELETE FROM tasks WHERE id = #{taskId}")
     void delete(@Param("taskId") long id);

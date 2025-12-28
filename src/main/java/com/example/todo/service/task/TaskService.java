@@ -1,12 +1,14 @@
 package com.example.todo.service.task;
 
-import com.example.todo.repository.task.TaskRepository;
-import lombok.RequiredArgsConstructor;
+import java.util.List;
+import java.util.Optional;
+
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.util.List;
-import java.util.Optional;
+import com.example.todo.repository.task.TaskRepository;
+
+import lombok.RequiredArgsConstructor;
 
 @Service
 @RequiredArgsConstructor
@@ -35,5 +37,17 @@ public class TaskService {
     @Transactional
     public void delete(long id) {
         taskRepository.delete(id);
+    }
+
+    @Transactional
+    public boolean toggleStatus(long id) {
+        var taskOpt = taskRepository.selectById(id);
+        if (taskOpt.isEmpty()) {
+            return false;
+        }
+        var current = taskOpt.get().status();
+        var next = current == TaskStatus.DONE ? TaskStatus.TODO : TaskStatus.DONE;
+        taskRepository.updateStatus(id, next);
+        return true;
     }
 }
