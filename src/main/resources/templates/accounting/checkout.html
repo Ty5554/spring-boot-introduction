@@ -1,0 +1,136 @@
+<!DOCTYPE html>
+<html lang="ja"
+      xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      layout:decorate="~{layout/layout}"
+>
+<head>
+    <title>お会計</title>
+</head>
+<body>
+<section layout:fragment="content">
+    <h1 class="h2 mb-4">お会計</h1>
+
+    <div th:if="${error}" class="alert alert-danger" role="alert">
+        <span th:text="${error}"></span>
+    </div>
+
+    <form method="post" th:action="@{/accounting/checkout}">
+        <div class="card mb-4">
+            <div class="card-header">
+                <h5 class="mb-0">商品を選択</h5>
+            </div>
+            <div class="card-body">
+                <table class="table table-hover">
+                    <thead>
+                    <tr>
+                        <th>商品名</th>
+                        <th class="text-end">単価（税抜）</th>
+                        <th class="text-center" style="width: 150px;">数量</th>
+                        <th class="text-end">小計</th>
+                    </tr>
+                    </thead>
+                    <tbody>
+                    <tr th:each="item : ${items}">
+                        <td th:text="${item.name()}"></td>
+                        <td class="text-end">
+                            <span th:text="${item.formattedPrice()}"></span>円
+                        </td>
+                        <td class="text-center">
+                            <input type="number" class="form-control form-control-sm text-center item-quantity"
+                                   th:name="'quantity_' + ${item.id()}"
+                                   th:data-price="${item.price()}"
+                                   value="0" min="0" max="99">
+                        </td>
+                        <td class="text-end">
+                            <span class="item-subtotal">0</span>円
+                        </td>
+                    </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+
+        <div class="card mb-4">
+            <div class="card-body">
+                <div class="row align-items-center">
+                    <div class="col-md-4">
+                        <table class="table table-borderless mb-0">
+                            <tr>
+                                <th>小計:</th>
+                                <td class="text-end"><span id="subtotal">0</span>円</td>
+                            </tr>
+                            <tr>
+                                <th>消費税（10%）:</th>
+                                <td class="text-end"><span id="tax">0</span>円</td>
+                            </tr>
+                            <tr class="fs-5 fw-bold">
+                                <th>合計:</th>
+                                <td class="text-end"><span id="total">0</span>円</td>
+                            </tr>
+                        </table>
+                    </div>
+                    <div class="col-md-4">
+                        <label for="payment" class="form-label fw-bold">お預かり金額</label>
+                        <div class="input-group">
+                            <input type="number" class="form-control form-control-lg" id="payment"
+                                   name="payment" min="0" step="1" placeholder="0">
+                            <span class="input-group-text">円</span>
+                        </div>
+                    </div>
+                    <div class="col-md-4">
+                        <table class="table table-borderless mb-0">
+                            <tr class="fs-4 fw-bold">
+                                <th>おつり:</th>
+                                <td class="text-end"><span id="change" class="text-primary">0</span>円</td>
+                            </tr>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="d-flex justify-content-center gap-3">
+            <button type="submit" class="btn btn-primary btn-lg px-5">お会計する</button>
+            <a th:href="@{/}" class="btn btn-outline-secondary btn-lg">キャンセル</a>
+        </div>
+    </form>
+
+    <script th:inline="javascript">
+        document.addEventListener('DOMContentLoaded', function() {
+            const quantityInputs = document.querySelectorAll('.item-quantity');
+            const paymentInput = document.getElementById('payment');
+
+            function calculate() {
+                let subtotal = 0;
+                quantityInputs.forEach(function(input) {
+                    const price = parseInt(input.dataset.price);
+                    const qty = parseInt(input.value) || 0;
+                    const itemSubtotal = price * qty;
+                    input.closest('tr').querySelector('.item-subtotal').textContent = itemSubtotal.toLocaleString();
+                    subtotal += itemSubtotal;
+                });
+
+                const tax = Math.floor(subtotal * 0.1);
+                const total = subtotal + tax;
+                const payment = parseInt(paymentInput.value) || 0;
+                const change = payment - total;
+
+                document.getElementById('subtotal').textContent = subtotal.toLocaleString();
+                document.getElementById('tax').textContent = tax.toLocaleString();
+                document.getElementById('total').textContent = total.toLocaleString();
+
+                const changeEl = document.getElementById('change');
+                changeEl.textContent = change.toLocaleString();
+                changeEl.className = change >= 0 ? 'text-primary' : 'text-danger';
+            }
+
+            quantityInputs.forEach(function(input) {
+                input.addEventListener('input', calculate);
+            });
+            paymentInput.addEventListener('input', calculate);
+        });
+    </script>
+</section>
+</body>
+</html>

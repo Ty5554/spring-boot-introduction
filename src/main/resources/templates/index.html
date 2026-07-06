@@ -10,8 +10,37 @@
 <body>
 <section layout:fragment="content">
     <div class="text-center">
-        <h1 class="h1">タスク管理のお手伝いをします</h1>
-        <p>タスク一覧から始めてください！</p>
+        <h1 class="h1">タスク管理 &amp; お会計アプリ</h1>
+        <p>メニューから機能を選んでください</p>
+        <div class="row mt-4 justify-content-center">
+            <div class="col-md-4 mb-3">
+                <div class="card">
+                    <div class="card-body">
+                        <h5 class="card-title">お会計</h5>
+                        <p class="card-text">商品を選んでお会計できます</p>
+                        <a th:href="@{/accounting}" class="btn btn-primary">お会計へ</a>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-4 mb-3">
+                <div class="card">
+                    <div class="card-body">
+                        <h5 class="card-title">商品管理</h5>
+                        <p class="card-text">商品の追加・編集・削除</p>
+                        <a th:href="@{/items}" class="btn btn-success">商品管理へ</a>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-4 mb-3">
+                <div class="card">
+                    <div class="card-body">
+                        <h5 class="card-title">注文履歴</h5>
+                        <p class="card-text">過去のお会計を確認できます</p>
+                        <a th:href="@{/accounting/orders}" class="btn btn-info">注文履歴へ</a>
+                    </div>
+                </div>
+            </div>
+        </div>
     </div>
 </section>
 </body>

@@ -1,0 +1,50 @@
+<!DOCTYPE html>
+<html lang="ja"
+      xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      layout:decorate="~{layout/layout}"
+>
+<head>
+    <title>注文履歴</title>
+</head>
+<body>
+<section layout:fragment="content">
+    <h1 class="h2 mb-4">注文履歴</h1>
+
+    <div th:if="${#lists.isEmpty(orders)}" class="alert alert-info">
+        まだ注文がありません。
+    </div>
+
+    <table th:if="${!#lists.isEmpty(orders)}" class="table table-striped table-hover">
+        <thead>
+        <tr>
+            <th>注文番号</th>
+            <th class="text-end">小計</th>
+            <th class="text-end">消費税</th>
+            <th class="text-end">合計</th>
+            <th class="text-end">お預かり</th>
+            <th class="text-end">おつり</th>
+            <th>日時</th>
+            <th></th>
+        </tr>
+        </thead>
+        <tbody>
+        <tr th:each="order : ${orders}">
+            <td th:text="'#' + ${order.id()}"></td>
+            <td class="text-end" th:text="${order.subtotal()} + '円'"></td>
+            <td class="text-end" th:text="${order.tax()} + '円'"></td>
+            <td class="text-end fw-bold" th:text="${order.totalAmount()} + '円'"></td>
+            <td class="text-end" th:text="${order.payment()} + '円'"></td>
+            <td class="text-end" th:text="${order.changeAmount()} + '円'"></td>
+            <td th:text="${order.orderedAt()}"></td>
+            <td>
+                <a th:href="@{/accounting/orders/{id}(id=${order.id()})}" class="btn btn-sm btn-outline-primary">詳細</a>
+            </td>
+        </tr>
+        </tbody>
+    </table>
+
+    <a th:href="@{/accounting}" class="btn btn-primary">新しいお会計</a>
+</section>
+</body>
+</html>

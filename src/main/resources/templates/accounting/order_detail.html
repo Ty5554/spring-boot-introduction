@@ -1,0 +1,75 @@
+<!DOCTYPE html>
+<html lang="ja"
+      xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      layout:decorate="~{layout/layout}"
+>
+<head>
+    <title>注文詳細</title>
+</head>
+<body>
+<section layout:fragment="content">
+    <h1 class="h2 mb-4">注文詳細 <small class="text-muted" th:text="'#' + ${order.id()}"></small></h1>
+
+    <div class="card mb-4">
+        <div class="card-header">
+            <h5 class="mb-0">注文内容</h5>
+        </div>
+        <div class="card-body">
+            <table class="table">
+                <thead>
+                <tr>
+                    <th>商品名</th>
+                    <th class="text-end">単価</th>
+                    <th class="text-center">数量</th>
+                    <th class="text-end">小計</th>
+                </tr>
+                </thead>
+                <tbody>
+                <tr th:each="item : ${orderItems}">
+                    <td th:text="${item.itemName()}"></td>
+                    <td class="text-end" th:text="${item.itemPrice()} + '円'"></td>
+                    <td class="text-center" th:text="${item.quantity()}"></td>
+                    <td class="text-end" th:text="${item.subtotal()} + '円'"></td>
+                </tr>
+                </tbody>
+            </table>
+        </div>
+    </div>
+
+    <div class="card mb-4">
+        <div class="card-body">
+            <table class="table table-borderless mb-0" style="max-width: 300px;">
+                <tr>
+                    <th>小計:</th>
+                    <td class="text-end" th:text="${order.subtotal()} + '円'"></td>
+                </tr>
+                <tr>
+                    <th>消費税（10%）:</th>
+                    <td class="text-end" th:text="${order.tax()} + '円'"></td>
+                </tr>
+                <tr class="fs-5 fw-bold border-top">
+                    <th>合計:</th>
+                    <td class="text-end" th:text="${order.totalAmount()} + '円'"></td>
+                </tr>
+                <tr>
+                    <th>お預かり:</th>
+                    <td class="text-end" th:text="${order.payment()} + '円'"></td>
+                </tr>
+                <tr class="fs-5 fw-bold text-primary">
+                    <th>おつり:</th>
+                    <td class="text-end" th:text="${order.changeAmount()} + '円'"></td>
+                </tr>
+            </table>
+        </div>
+    </div>
+
+    <p class="text-muted" th:text="'注文日時: ' + ${order.orderedAt()}"></p>
+
+    <div class="d-flex gap-3">
+        <a th:href="@{/accounting/orders}" class="btn btn-outline-secondary">注文履歴へ戻る</a>
+        <a th:href="@{/accounting}" class="btn btn-primary">新しいお会計</a>
+    </div>
+</section>
+</body>
+</html>

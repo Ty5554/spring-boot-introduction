@@ -1,0 +1,38 @@
+<!DOCTYPE html>
+<html lang="ja"
+      xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      layout:decorate="~{layout/layout}"
+>
+<head>
+    <title>商品編集</title>
+</head>
+<body>
+<section layout:fragment="content">
+    <h1 class="h2 mb-4">商品編集</h1>
+
+    <form method="post" th:action="@{/items/{id}(id=${itemId})}" th:object="${itemForm}">
+        <input type="hidden" name="_method" value="put">
+        <div class="mb-3">
+            <label for="name" class="form-label">商品名</label>
+            <input type="text" class="form-control" id="name" th:field="*{name}"
+                   th:classappend="${#fields.hasErrors('name')} ? 'is-invalid'">
+            <div class="invalid-feedback" th:if="${#fields.hasErrors('name')}" th:errors="*{name}"></div>
+        </div>
+        <div class="mb-3">
+            <label for="price" class="form-label">価格（税抜）</label>
+            <div class="input-group">
+                <input type="number" class="form-control" id="price" th:field="*{price}" min="1"
+                       th:classappend="${#fields.hasErrors('price')} ? 'is-invalid'">
+                <span class="input-group-text">円</span>
+                <div class="invalid-feedback" th:if="${#fields.hasErrors('price')}" th:errors="*{price}"></div>
+            </div>
+        </div>
+        <div class="d-flex gap-2">
+            <button type="submit" class="btn btn-primary">更新</button>
+            <a th:href="@{/items}" class="btn btn-outline-secondary">キャンセル</a>
+        </div>
+    </form>
+</section>
+</body>
+</html>

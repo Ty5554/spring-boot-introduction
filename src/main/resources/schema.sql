@@ -5,3 +5,32 @@ CREATE TABLE tasks
   description TEXT,
   status VARCHAR(256) NOT NULL
 );
+
+CREATE TABLE items
+(
+  id BIGINT NOT NULL PRIMARY KEY AUTO_INCREMENT,
+  name VARCHAR(256) NOT NULL,
+  price INT NOT NULL
+);
+
+CREATE TABLE orders
+(
+  id BIGINT NOT NULL PRIMARY KEY AUTO_INCREMENT,
+  subtotal INT NOT NULL,
+  tax INT NOT NULL,
+  total_amount INT NOT NULL,
+  payment INT NOT NULL,
+  change_amount INT NOT NULL,
+  ordered_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP
+);
+
+CREATE TABLE order_items
+(
+  id BIGINT NOT NULL PRIMARY KEY AUTO_INCREMENT,
+  order_id BIGINT NOT NULL,
+  item_name VARCHAR(256) NOT NULL,
+  item_price INT NOT NULL,
+  quantity INT NOT NULL,
+  subtotal INT NOT NULL,
+  FOREIGN KEY (order_id) REFERENCES orders(id)
+);

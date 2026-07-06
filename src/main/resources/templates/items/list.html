@@ -1,0 +1,48 @@
+<!DOCTYPE html>
+<html lang="ja"
+      xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      layout:decorate="~{layout/layout}"
+>
+<head>
+    <title>商品一覧</title>
+</head>
+<body>
+<section layout:fragment="content">
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <h1 class="h2 mb-0">商品一覧</h1>
+        <a th:href="@{/items/creationForm}" class="btn btn-primary">商品を追加</a>
+    </div>
+
+    <div th:if="${#lists.isEmpty(items)}" class="alert alert-info">
+        商品がまだ登録されていません。
+    </div>
+
+    <table th:if="${!#lists.isEmpty(items)}" class="table table-striped table-hover">
+        <thead>
+        <tr>
+            <th>ID</th>
+            <th>商品名</th>
+            <th class="text-end">価格（税抜）</th>
+            <th></th>
+        </tr>
+        </thead>
+        <tbody>
+        <tr th:each="item : ${items}">
+            <td th:text="${item.id()}"></td>
+            <td th:text="${item.name()}"></td>
+            <td class="text-end" th:text="${item.formattedPrice()} + '円'"></td>
+            <td class="text-end">
+                <a th:href="@{/items/{id}/editForm(id=${item.id()})}" class="btn btn-sm btn-outline-primary me-1">編集</a>
+                <form th:action="@{/items/{id}(id=${item.id()})}" method="post" class="d-inline">
+                    <input type="hidden" name="_method" value="delete">
+                    <button type="submit" class="btn btn-sm btn-outline-danger"
+                            onclick="return confirm('削除してよろしいですか？')">削除</button>
+                </form>
+            </td>
+        </tr>
+        </tbody>
+    </table>
+</section>
+</body>
+</html>
